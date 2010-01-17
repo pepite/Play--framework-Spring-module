@@ -24,7 +24,7 @@
                 <include name="**/play.static"/>
             </fileset>
         </copy>
-        <jar destfile="dist/play-spring.jar" basedir="tmp/classes">
+        <jar destfile="lib/play-spring.jar" basedir="tmp/classes">
             <manifest>
                 <section name="Play">
                     <attribute name="Specification-Title" value="Spring module"/>
