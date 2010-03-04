@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.support.GenericApplicationContext;
 import org.xml.sax.InputSource;
 import play.Logger;
@@ -20,8 +21,15 @@ import play.inject.Injector;
 import play.vfs.VirtualFile;
 
 public class SpringPlugin extends PlayPlugin implements BeanSource {
-
-    public static GenericApplicationContext applicationContext;
+	/**
+	 *	Component scanning constants.
+	 */
+	private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
+    private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
+	private static final String TRUE_STR = "true";
+	private static final String FALSE_STR = "false";
+	
+	public static GenericApplicationContext applicationContext;
     private long startDate = 0;
 
     @Override
@@ -65,6 +73,20 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
                 configurer.setProperties(Play.configuration);
                 applicationContext.addBeanFactoryPostProcessor(configurer);
+                //
+                //	Check for component scan 
+                //
+                boolean doComponentScan = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_FLAG,FALSE_STR).equals(TRUE_STR);
+                Logger.debug("Spring configuration do component scan: " + doComponentScan);
+                if (doComponentScan)
+                {
+                    ClassPathBeanDefinitionScanner scanner = new PlayClassPathBeanDefinitionScanner(applicationContext);
+                    String scanBasePackage = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES,"");
+                    Logger.debug("Base package for scan: " + scanBasePackage);
+                    Logger.debug("Scanning...");
+                    scanner.scan(scanBasePackage.split(","));
+                    Logger.debug("... component scanning complete");
+                }
 
                 is = url.openStream();
                 xmlReader.loadBeanDefinitions(new InputSource(is));
