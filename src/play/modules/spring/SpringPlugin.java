@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -21,15 +22,13 @@ import play.inject.Injector;
 import play.vfs.VirtualFile;
 
 public class SpringPlugin extends PlayPlugin implements BeanSource {
-	/**
-	 *	Component scanning constants.
-	 */
-	private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
+    /**
+     * Component scanning constants.
+     */
+    private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
     private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
-	private static final String TRUE_STR = "true";
-	private static final String FALSE_STR = "false";
-	
-	public static GenericApplicationContext applicationContext;
+
+    public static GenericApplicationContext applicationContext;
     private long startDate = 0;
 
     @Override
@@ -58,8 +57,8 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
 
     @Override
     public void onApplicationStart() {
-        URL url = this.getClass().getClassLoader().getResource(Play.id+".application-context.xml");
-        if(url == null) {
+        URL url = this.getClass().getClassLoader().getResource(Play.id + ".application-context.xml");
+        if (url == null) {
             url = this.getClass().getClassLoader().getResource("application-context.xml");
         }
         if (url != null) {
@@ -76,12 +75,11 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 //
                 //	Check for component scan 
                 //
-                boolean doComponentScan = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_FLAG,FALSE_STR).equals(TRUE_STR);
+                boolean doComponentScan = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_FLAG, "false").equals("true");
                 Logger.debug("Spring configuration do component scan: " + doComponentScan);
-                if (doComponentScan)
-                {
+                if (doComponentScan) {
                     ClassPathBeanDefinitionScanner scanner = new PlayClassPathBeanDefinitionScanner(applicationContext);
-                    String scanBasePackage = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES,"");
+                    String scanBasePackage = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES, "");
                     Logger.debug("Base package for scan: " + scanBasePackage);
                     Logger.debug("Scanning...");
                     scanner.scan(scanBasePackage.split(","));
@@ -121,12 +119,12 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
     }
 
     public <T> T getBeanOfType(Class<T> clazz) {
-        Map<String,T> beans = applicationContext.getBeansOfType(clazz);
-        if(beans.size() == 0) {
+        Map<String, T> beans = applicationContext.getBeansOfType(clazz);
+        if (beans.size() == 0) {
             return null;
         }
         return beans.values().iterator().next();
     }
-    
-    
+
+
 }

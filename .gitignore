@@ -2,4 +2,5 @@
 build.properties
 /dist
 lib/play-spring.jar
-
+*.ipr
+*.iws

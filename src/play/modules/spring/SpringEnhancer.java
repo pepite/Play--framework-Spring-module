@@ -14,6 +14,7 @@ public class SpringEnhancer extends Enhancer {
             return;
         }
         for (CtField ctField : ctClass.getDeclaredFields()) {
+ 	    // TODO: FIXME
             if(hasAnnotation(ctField, "javax.inject.Inject")) {
                 //ctClass.removeField(ctField);
                 //CtField newCtField = new CtField(ctField.getType(), ctField.getName(), ctClass);
