@@ -79,4 +79,4 @@ bc. <bean id="a" class="myapp.A">
 Now your application can read properties from any properties file you
 want.
 
-See this http://groups.google.com/group/play-framework/browse_thread/thread/ac150ce2dc185423/56e09054a7027573?lnk=gst&q=oded+peer#56e09054a7027573 for more info
+See this "post":http://groups.google.com/group/play-framework/browse_thread/thread/ac150ce2dc185423/56e09054a7027573?lnk=gst&q=oded+peer#56e09054a7027573 for more info
