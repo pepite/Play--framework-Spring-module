@@ -57,3 +57,26 @@ You can limit the classes scanned to specific packages or canonical class names 
 bc. play.spring.component-scan.base-packages=controllers.beans,services
  
 In this example, only classes whose canonical name start with either 'controllers.beans' or 'services' will be scanned and identified as beans.
+
+h3. Defining your own properties file using the Spring module
+
+Today I added my own properties file to my Spring-powered Play app (Thanks to Oded Peer).
+
+Simply add the following lines to your application-context.xml:
+
+bc. <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  <property name="location" value="classpath:myapp.properties"/>
+  <property name="placeholderPrefix"><value>#[</value></property>
+  <property name="placeholderSuffix"><value>]</value></property>
+</bean>
+
+and use it in your beans:
+
+bc. <bean id="a" class="myapp.A">
+  <property name="str"><value>#[myapp.somekey]</value></property>
+</bean>
+
+Now your application can read properties from any properties file you
+want.
+
+See this http://groups.google.com/group/play-framework/browse_thread/thread/ac150ce2dc185423/56e09054a7027573?lnk=gst&q=oded+peer#56e09054a7027573 for more info
