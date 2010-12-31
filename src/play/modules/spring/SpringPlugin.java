@@ -27,6 +27,7 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
      */
     private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
     private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
+    private static final String PLAY_SPRING_ADD_PLAY_PROPERTIES = "play.spring.add-play-properties";
 
     public static GenericApplicationContext applicationContext;
     private long startDate = 0;
@@ -69,9 +70,16 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 applicationContext.setClassLoader(Play.classloader);
                 XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
                 xmlReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
-                PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
-                configurer.setProperties(Play.configuration);
-                applicationContext.addBeanFactoryPostProcessor(configurer);
+
+                if (Play.configuration.getProperty(PLAY_SPRING_ADD_PLAY_PROPERTIES,
+                                                   "true").equals("true")) {
+                    Logger.debug("Adding PropertyPlaceholderConfigurer with Play properties");
+                    PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
+                    configurer.setProperties(Play.configuration);
+                    applicationContext.addBeanFactoryPostProcessor(configurer);
+                } else {
+                    Logger.debug("PropertyPlaceholderConfigurer with Play properties NOT added");
+                }
                 //
                 //	Check for component scan 
                 //
@@ -125,6 +133,4 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
         }
         return beans.values().iterator().next();
     }
-
-
 }
