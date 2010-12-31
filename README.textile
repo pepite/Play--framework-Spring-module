@@ -58,7 +58,7 @@ bc. play.spring.component-scan.base-packages=controllers.beans,services
  
 In this example, only classes whose canonical name start with either 'controllers.beans' or 'services' will be scanned and identified as beans.
 
-h3. Manual PropertyPlaceholderConfigurer configuration
+h2. Manual PropertyPlaceholderConfigurer configuration
 
 By default, a org.springframework.beans.factory.config.PropertyPlaceholderConfigurer containing the properties of application.conf is added to the Spring context.  In some cases, this may not be desirable as it can conflict with a PropertyPlaceholderConfigurer that you have defined in your application-context.xml.  To disable the automatic PropertyPlaceholderConfigurer placement into the context, update application.conf with
 
