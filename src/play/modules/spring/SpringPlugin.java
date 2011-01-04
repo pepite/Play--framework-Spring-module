@@ -20,6 +20,12 @@ import play.inject.Injector;
 import play.vfs.VirtualFile;
 
 public class SpringPlugin extends PlayPlugin implements BeanSource {
+    /**
+     * Component scanning constants.
+     */
+    private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
+    private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
+    private static final String PLAY_SPRING_ADD_PLAY_PROPERTIES = "play.spring.add-play-properties";
 
     public static GenericApplicationContext applicationContext;
     private long startDate = 0;
@@ -62,9 +68,29 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 applicationContext.setClassLoader(Play.classloader);
                 XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
                 xmlReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
-                PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
-                configurer.setProperties(Play.configuration);
-                applicationContext.addBeanFactoryPostProcessor(configurer);
+
+                if (Play.configuration.getProperty(PLAY_SPRING_ADD_PLAY_PROPERTIES,
+                                                   "true").equals("true")) {
+                    Logger.debug("Adding PropertyPlaceholderConfigurer with Play properties");
+                    PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
+                    configurer.setProperties(Play.configuration);
+                    applicationContext.addBeanFactoryPostProcessor(configurer);
+                } else {
+                    Logger.debug("PropertyPlaceholderConfigurer with Play properties NOT added");
+                }
+                //
+                //	Check for component scan 
+                //
+                boolean doComponentScan = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_FLAG, "false").equals("true");
+                Logger.debug("Spring configuration do component scan: " + doComponentScan);
+                if (doComponentScan) {
+                    ClassPathBeanDefinitionScanner scanner = new PlayClassPathBeanDefinitionScanner(applicationContext);
+                    String scanBasePackage = Play.configuration.getProperty(PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES, "");
+                    Logger.debug("Base package for scan: " + scanBasePackage);
+                    Logger.debug("Scanning...");
+                    scanner.scan(scanBasePackage.split(","));
+                    Logger.debug("... component scanning complete");
+                }
 
                 is = url.openStream();
                 xmlReader.loadBeanDefinitions(new InputSource(is));
@@ -105,6 +131,4 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
         }
         return beans.values().iterator().next();
     }
-    
-    
 }

@@ -6,6 +6,9 @@
 
     <path id="project.classpath">
         <pathelement path="${play.path}/framework/classes"/>
+        <fileset dir="${play.path}/framework">
+                <include name="play.jar"/>
+        </fileset>
         <fileset dir="${play.path}/framework/lib">
                 <include name="*.jar"/>
         </fileset>
