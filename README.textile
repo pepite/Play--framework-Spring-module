@@ -58,25 +58,21 @@ bc. play.spring.component-scan.base-packages=controllers.beans,services
  
 In this example, only classes whose canonical name start with either 'controllers.beans' or 'services' will be scanned and identified as beans.
 
-h3. Defining your own properties file using the Spring module
+h2. Manual PropertyPlaceholderConfigurer configuration
 
-Today I added my own properties file to my Spring-powered Play app (Thanks to Oded Peer).
+By default, a org.springframework.beans.factory.config.PropertyPlaceholderConfigurer containing the properties of application.conf is added to the Spring context.  In some cases, this may not be desirable as it can conflict with a PropertyPlaceholderConfigurer that you have defined in your application-context.xml.  To disable the automatic PropertyPlaceholderConfigurer placement into the context, update application.conf with
 
-Simply add the following lines to your application-context.xml:
+bc. play.spring.add-play-properties=false
+
+and then add your own definition to application-context.xml.
+
+If you want to have your own properties and those of your Play! application handled by a PropertyPlaceholderConfigurer, you can add all of them in application-context.xml:
 
 bc. <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-  <property name="location" value="classpath:myapp.properties"/>
-  <property name="placeholderPrefix"><value>#[</value></property>
-  <property name="placeholderSuffix"><value>]</value></property>
+    <property name="locations">
+        <list>
+            <value>classpath:jdbc.properties</value>
+            <value>classpath:application.conf</value>
+        </list>
+    </property>
 </bean>
-
-and use it in your beans:
-
-bc. <bean id="a" class="myapp.A">
-  <property name="str"><value>#[myapp.somekey]</value></property>
-</bean>
-
-Now your application can read properties from any properties file you
-want.
-
-See this "post":http://groups.google.com/group/play-framework/browse_thread/thread/ac150ce2dc185423/56e09054a7027573?lnk=gst&q=oded+peer#56e09054a7027573 for more info
