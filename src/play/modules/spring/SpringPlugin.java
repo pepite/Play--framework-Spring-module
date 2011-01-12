@@ -58,9 +58,9 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
 
     @Override
     public void onApplicationStart() {
-        URL url = this.getClass().getClassLoader().getResource(Play.id + ".application-context.xml");
+        URL url = Play.classloader.getResource(Play.id + ".application-context.xml");
         if (url == null) {
-            url = this.getClass().getClassLoader().getResource("application-context.xml");
+            url = Play.classloader.getResource("application-context.xml");
         }
         if (url != null) {
             InputStream is = null;
