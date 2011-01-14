@@ -76,3 +76,9 @@ bc. <bean class="org.springframework.beans.factory.config.PropertyPlaceholderCon
         </list>
     </property>
 </bean>
+
+h2. Namespaces
+
+If you want the Spring configuration loader to be namespace aware, you need to explicitly state this in the configuration using
+
+bc. play.spring.namespace-aware=true
