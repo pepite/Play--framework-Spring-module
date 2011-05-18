@@ -28,6 +28,7 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
     private static final String PLAY_SPRING_COMPONENT_SCAN_FLAG = "play.spring.component-scan";
     private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
     private static final String PLAY_SPRING_ADD_PLAY_PROPERTIES = "play.spring.add-play-properties";
+    private static final String PLAY_SPRING_NAMESPACE_AWARE = "play.spring.namespace-aware";
 
     public static GenericApplicationContext applicationContext;
     private long startDate = 0;
@@ -58,9 +59,9 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
 
     @Override
     public void onApplicationStart() {
-        URL url = this.getClass().getClassLoader().getResource(Play.id + ".application-context.xml");
+        URL url = Play.classloader.getResource(Play.id + ".application-context.xml");
         if (url == null) {
-            url = this.getClass().getClassLoader().getResource("application-context.xml");
+            url = Play.classloader.getResource("application-context.xml");
         }
         if (url != null) {
             InputStream is = null;
@@ -69,6 +70,10 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 applicationContext = new GenericApplicationContext();
                 applicationContext.setClassLoader(Play.classloader);
                 XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
+                if (Play.configuration.getProperty(PLAY_SPRING_NAMESPACE_AWARE,
+                                                   "false").equals("true")) {
+                    xmlReader.setNamespaceAware(true);
+                }
                 xmlReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
 
                 if (Play.configuration.getProperty(PLAY_SPRING_ADD_PLAY_PROPERTIES,
