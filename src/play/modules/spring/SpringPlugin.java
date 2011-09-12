@@ -53,11 +53,6 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
     }
 
     @Override
-    public void enhance(ApplicationClass applicationClass) throws Exception {
-        new SpringEnhancer().enhanceThisClass(applicationClass);
-    }
-
-    @Override
     public void onApplicationStart() {
         URL url = Play.classloader.getResource(Play.id + ".application-context.xml");
         if (url == null) {
