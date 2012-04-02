@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -54,12 +56,19 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
 
     @Override
     public void onApplicationStart() {
-        URL url = Play.classloader.getResource(Play.id + ".application-context.xml");
-        if (url == null) {
-            url = Play.classloader.getResource("application-context.xml");
+        List<VirtualFile> appContexts = new ArrayList<VirtualFile>();
+
+        for(VirtualFile vf: Play.javaPath) {
+            VirtualFile appContext = vf.child(Play.id + ".application-context.xml");
+            if(!appContext.exists()) {
+                appContext = vf.child("application-context.xml");
+            }
+            if(appContext.exists()) {
+                appContexts.add(appContext);
+            }
         }
-        if (url != null) {
-            InputStream is = null;
+
+        if (appContexts.size() > 0) {
             try {
                 Logger.debug("Starting Spring application context");
                 applicationContext = new GenericApplicationContext();
@@ -94,8 +103,17 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                     Logger.debug("... component scanning complete");
                 }
 
-                is = url.openStream();
-                xmlReader.loadBeanDefinitions(new InputSource(is));
+                for(VirtualFile vf : appContexts) {
+                    InputStream iStream = null;
+                    try {
+                        iStream = vf.inputstream();
+                        InputSource is = new InputSource(iStream);
+                        xmlReader.loadBeanDefinitions(is);
+                    }
+                    finally {
+                        iStream.close();
+                    }
+                }
                 ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(Play.classloader);
                 try {
@@ -113,14 +131,6 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
                 }
             } catch (IOException e) {
                 Logger.error(e, "Can't load spring config file");
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        Logger.error(e, "Can't close spring config file stream");
-                    }
-                }
             }
         }
         Injector.inject(this);
