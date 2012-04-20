@@ -4,3 +4,10 @@ build.properties
 lib/play-spring.jar
 *.ipr
 *.iws
+
+#ignoring Eclipse stuff:
+.classpath
+.settings/
+.project
+bin/
+bin/
