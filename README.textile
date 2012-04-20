@@ -84,7 +84,7 @@ If you want the Spring configuration loader to be namespace aware, you need to e
 bc. play.spring.namespace-aware=true
 
 
-h2. Spring profiles
+h2. <a>Spring profiles</a>
 
 If you want to configure Spring profile(s), add the following to the conf/application.conf
 
