@@ -7,7 +7,7 @@
     <path id="project.classpath">
         <pathelement path="${play.path}/framework/classes"/>
         <fileset dir="${play.path}/framework">
-                <include name="play.jar"/>
+                <include name="play-1.2.4.jar"/>
         </fileset>
         <fileset dir="${play.path}/framework/lib">
                 <include name="*.jar"/>
@@ -39,7 +39,7 @@
 
     <target name="compile">
         <mkdir dir="tmp/classes" />
-        <javac srcdir="src" destdir="tmp/classes" target="1.5" debug="true">
+        <javac srcdir="src" destdir="tmp/classes" target="1.6" debug="true">
             <classpath refid="project.classpath" />
         </javac>
     </target>
