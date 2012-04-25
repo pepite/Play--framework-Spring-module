@@ -11,11 +11,11 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.support.GenericApplicationContext;
 import org.xml.sax.InputSource;
+
 import play.Logger;
 import play.Play;
 import play.Play.Mode;
 import play.PlayPlugin;
-import play.classloading.ApplicationClasses.ApplicationClass;
 import play.exceptions.PlayException;
 import play.inject.BeanSource;
 import play.inject.Injector;
@@ -29,6 +29,9 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
     private static final String PLAY_SPRING_COMPONENT_SCAN_BASE_PACKAGES = "play.spring.component-scan.base-packages";
     private static final String PLAY_SPRING_ADD_PLAY_PROPERTIES = "play.spring.add-play-properties";
     private static final String PLAY_SPRING_NAMESPACE_AWARE = "play.spring.namespace-aware";
+
+    private static final String PLAY_SPRING_PROFILES = "play.spring.profiles";
+	// ------------------------------
 
     public static GenericApplicationContext applicationContext;
     private long startDate = 0;
@@ -63,6 +66,13 @@ public class SpringPlugin extends PlayPlugin implements BeanSource {
             try {
                 Logger.debug("Starting Spring application context");
                 applicationContext = new GenericApplicationContext();
+
+
+               String profiles = Play.configuration.getProperty(PLAY_SPRING_PROFILES);
+				if (profiles != null) {
+					applicationContext.getEnvironment().setActiveProfiles(profiles);
+				}
+
                 applicationContext.setClassLoader(Play.classloader);
                 XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
                 if (Play.configuration.getProperty(PLAY_SPRING_NAMESPACE_AWARE,
