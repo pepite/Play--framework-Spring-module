@@ -61,7 +61,7 @@ public class PlayClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionS
 					Logger.debug("Scanning class: " + appClass.name);
 
                     AbstractResource res = null;
-                    if (System.clearProperty("precompile") == null)  {
+                    if (Play.usePrecompiled)  {
                        File f = Play.getFile("precompiled/java/" + (appClass.name.replace(".", "/")) + ".class");
                        res = new InputStreamResource(new FileInputStream(f));
                     } else {
