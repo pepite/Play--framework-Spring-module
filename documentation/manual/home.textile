@@ -23,6 +23,8 @@ bc. <?xml version="1.0" encoding="UTF-8"?>
     
 </beans>
 
+You can also define a separate application context which will be used for running the tests by prefixing the filename with the Play! id, ie. **test.application-context.xml**. This works also works for **dev** and **prod**.
+
 h2. <a>Retrieve beans from application code</a>
 
 You can obtain bean instances from the application code, using the **play.modules.spring.Spring** helper.
